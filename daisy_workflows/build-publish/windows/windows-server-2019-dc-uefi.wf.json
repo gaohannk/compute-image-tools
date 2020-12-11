@@ -1,0 +1,51 @@
+{
+  "Name": "windows-2019-dc-uefi",
+  "Project": "bct-uefi-images",
+  "Zone": "us-central1-b",
+  "GCSPath": "gs://gce-image-build-bucket/daisy/${USERNAME}",
+  "Vars": {
+    "install_disk": "disk-install",
+    "build_date": "${TIMESTAMP}",
+    "image_prefix": "windows-server-2019-dc",
+    "gcs_path": {"Required": "true", "Description": "The GCS path that image raw file exported to."},
+    "google_cloud_repo": {"Value": "stable", "Description": "Cloud repo to use during the build"},
+    "workflow_root": {"Value": "/workflows", "Description": "Root of github workflows, defaults to /workflows in the container."}
+  },
+  "Steps": {
+    "build": {
+      "Timeout": "3h",
+      "IncludeWorkflow": {
+        "Path": "./windows_build.wf.json",
+        "Vars": {
+          "install_disk": "${install_disk}",
+          "install_disk_size": "50",
+          "updates": "gs://gce-image-build-resources/windows/updates_2019/",
+          "drivers_bucket": "gs://gce-windows-drivers-public/release/win6.3-signed/",
+          "edition": "Windows Server 2019 SERVERDATACENTER",
+          "media": "gs://gce-image-build-resources/windows/iso/SW_DVD9_Win_Server_STD_CORE_2019_1809.1_64Bit_English_DC_STD_MLF_X22-02970.ISO",
+          "cloud_sdk": "gs://gce-image-build-resources/windows/GoogleCloudSDKInstaller.exe",
+          "pwsh": "gs://gce-image-build-resources/windows/PowerShell-7.0.2-win-x64.msi",
+          "google_cloud_repo": "${google_cloud_repo}",
+          "uefi_build": "true",
+          "install_source_image": "projects/bct-uefi-images/global/images/uefi-feature-disk",
+          "workflow_root": "${workflow_root}"
+        }
+      }
+    },
+    "windows-export": {
+      "Timeout": "60m",
+      "IncludeWorkflow": {
+        "Path": "./windows_export.wf.json",
+        "Vars": {
+          "build_date": "${build_date}",
+          "image_prefix": "${image_prefix}",
+          "gcs_path": "${gcs_path}",
+          "workflow_root": "${workflow_root}"
+        }
+      }
+    }
+  },
+  "Dependencies": {
+    "windows-export": ["build"]
+  }
+}
