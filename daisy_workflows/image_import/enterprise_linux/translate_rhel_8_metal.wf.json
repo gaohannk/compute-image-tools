@@ -1,5 +1,5 @@
 {
-  "Name": "translate-rhel-8-byol",
+  "Name": "translate-rhel-8",
   "Vars": {
     "source_disk": {
       "Required": true,
@@ -14,8 +14,8 @@
       "Description": "Whether to install GCE packages."
     },
     "image_name": {
-      "Value": "rhel-8-${ID}",
-      "Description": "The name of the translated RHEL 8 image."
+      "Value": "rhel-8-metal-${ID}",
+      "Description": "The name of the translated RHEL 8 bare metal image."
     },
     "family": {
       "Value": "",
@@ -56,7 +56,7 @@
         "Vars": {
           "el_release": "8",
           "install_gce_packages": "${install_gce_packages}",
-          "bare_metal": "false",
+          "bare_metal": "true",
           "translator_disk": "disk-translator",
           "imported_disk": "${source_disk}",
           "import_network": "${import_network}",
@@ -71,7 +71,7 @@
           "Name": "${image_name}",
           "SourceDisk": "${source_disk}",
           "Family": "${family}",
-          "Licenses": ["projects/rhel-cloud/global/licenses/rhel-8-byos"],
+          "Licenses": ["projects/rhel-cloud/global/licenses/rhel-8"],
           "Description": "${description}",
           "ExactName": true,
           "NoCleanup": true

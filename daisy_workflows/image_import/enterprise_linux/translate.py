@@ -96,11 +96,13 @@ class Distro(Enum):
 
 class TranslateSpec:
   def __init__(self, g: guestfs.GuestFS, use_rhel_gce_license: bool,
-               distro: Distro, install_gce: bool, el_release: str):
+               distro: Distro, install_gce: bool, bare_metal: bool,
+               el_release: str):
     self.g = g
     self.use_rhel_gce_license = use_rhel_gce_license
     self.distro = distro
     self.install_gce = install_gce
+    self.bare_metal = bare_metal
     self.el_release = el_release
 
 
@@ -330,11 +332,13 @@ def run_translate(g: guestfs.GuestFS):
 
   use_rhel_gce_license = utils.GetMetadataAttribute('use_rhel_gce_license')
   el_release = utils.GetMetadataAttribute('el_release')
+  bare_metal = utils.GetMetadataAttribute('bare_metal')
   install_gce = utils.GetMetadataAttribute('install_gce_packages')
   spec = TranslateSpec(g=g,
                        use_rhel_gce_license=use_rhel_gce_license == 'true',
                        distro=distro,
                        el_release=el_release,
+                       bare_metal=bare_metal,
                        install_gce=install_gce == 'true')
 
   try:

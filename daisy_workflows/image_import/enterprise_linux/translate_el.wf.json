@@ -9,6 +9,10 @@
       "Value": "true",
       "Description": "Whether to install GCE packages."
     },
+    "bare_metal": {
+      "Required": true,
+      "Description": "Whether to tranlate a bare metal image."
+    },
     "imported_disk": {
       "Required": true,
       "Description": "The name of the imported GCE disk resource."
@@ -59,6 +63,7 @@
             "prefix": "Translate",
             "el_release": "${el_release}",
             "install_gce_packages": "${install_gce_packages}",
+            "bare_metal": "${bare_metal}",
             "use_rhel_gce_license": "${use_rhel_gce_license}"
           },
           "networkInterfaces": [

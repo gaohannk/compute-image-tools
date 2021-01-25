@@ -57,6 +57,7 @@
         "Vars": {
           "el_release": "8",
           "install_gce_packages": "${install_gce_packages}",
+          "bare_metal": "false",
           "translator_disk": "disk-translator",
           "imported_disk": "${source_disk}",
           "import_network": "${import_network}",

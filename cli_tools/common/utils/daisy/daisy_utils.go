@@ -80,6 +80,10 @@ var (
 			WorkflowPath: "enterprise_linux/translate_rhel_7_byol.wf.json",
 			LicenseURI:   "projects/rhel-cloud/global/licenses/rhel-7-byol",
 		}, {
+			GcloudOsFlag: "rhel-7-metal",
+			WorkflowPath: "bare_metal/translate_rhel_7.wf.json",
+			LicenseURI:   "projects/rhel-cloud/global/licenses/rhel-7-server",
+		},{
 			GcloudOsFlag: "rhel-8",
 			WorkflowPath: "enterprise_linux/translate_rhel_8_licensed.wf.json",
 			LicenseURI:   "projects/rhel-cloud/global/licenses/rhel-8-server",
@@ -87,6 +91,10 @@ var (
 			GcloudOsFlag: "rhel-8-byol",
 			WorkflowPath: "enterprise_linux/translate_rhel_8_byol.wf.json",
 			LicenseURI:   "projects/rhel-cloud/global/licenses/rhel-8-byos",
+		}, {
+			GcloudOsFlag: "rhel-8-metal",
+			WorkflowPath: "bare_metal/translate_rhel_8.wf.json",
+			LicenseURI:   "projects/rhel-cloud/global/licenses/rhel-8-server",
 		},
 
 		// SUSE
