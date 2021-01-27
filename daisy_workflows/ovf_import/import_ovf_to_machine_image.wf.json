@@ -18,6 +18,10 @@
       "Value": "true",
       "Description": "Whether to install GCE packages."
     },
+    "bare_metal": {
+      "Required": true,
+      "Description": "Whether to import to bare metal instance"
+    },
     "description": {
       "Value": "",
       "Description": "Optional description to set for the machine image."
@@ -68,6 +72,7 @@
           "source_disk": "${translation_disk_name}",
           "image_name": "${boot_image_name}",
           "install_gce_packages": "${install_gce_packages}",
+          "bare_metal": "${bare_metal}",
           "description": "${description}",
           "import_network": "${network}",
           "import_subnet": "${subnet}"
