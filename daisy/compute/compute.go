@@ -56,6 +56,7 @@ type Client interface {
 	DeleteInstance(project, zone, name string) error
 	StartInstance(project, zone, name string) error
 	StopInstance(project, zone, name string) error
+	SuspendInstance(project, zone, name string) error
 	DeleteNetwork(project, name string) error
 	DeleteSubnetwork(project, region, name string) error
 	DeleteTargetInstance(project, zone, name string) error
@@ -737,6 +738,16 @@ func (c *client) StartInstance(project, zone, name string) error {
 // StopInstance stops a GCE instance.
 func (c *client) StopInstance(project, zone, name string) error {
 	op, err := c.Retry(c.raw.Instances.Stop(project, zone, name).Do)
+	if err != nil {
+		return err
+	}
+
+	return c.i.zoneOperationsWait(project, zone, op.Name)
+}
+
+// SuspendInstance suspend a GCE instance.
+func (c *client) SuspendInstance(project, zone, name string) error {
+	op, err := c.RetryBeta(c.rawBeta.Instances.Suspend(project, zone, name).Do)
 	if err != nil {
 		return err
 	}

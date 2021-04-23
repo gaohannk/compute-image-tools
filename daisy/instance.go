@@ -808,6 +808,7 @@ func newInstanceRegistry(w *Workflow) *instanceRegistry {
 	ir := &instanceRegistry{baseResourceRegistry: baseResourceRegistry{w: w, typeName: "instance", urlRgx: instanceURLRgx}}
 	ir.baseResourceRegistry.deleteFn = ir.deleteFn
 	ir.baseResourceRegistry.startFn = ir.startFn
+	ir.baseResourceRegistry.suspendFn = ir.suspendFn
 	ir.baseResourceRegistry.stopFn = ir.stopFn
 	ir.init()
 	return ir
@@ -846,6 +847,15 @@ func (ir *instanceRegistry) startFn(res *Resource) DError {
 func (ir *instanceRegistry) stopFn(res *Resource) DError {
 	m := NamedSubexp(instanceURLRgx, res.link)
 	err := ir.w.ComputeClient.StopInstance(m["project"], m["zone"], m["instance"])
+	if gErr, ok := err.(*googleapi.Error); ok && gErr.Code == http.StatusNotFound {
+		return typedErr(resourceDNEError, "failed to stop instance", err)
+	}
+	return newErr("failed to stop instance", err)
+}
+
+func (ir *instanceRegistry) suspendFn(res *Resource) DError {
+	m := NamedSubexp(instanceURLRgx, res.link)
+	err := ir.w.ComputeClient.SuspendInstance(m["project"], m["zone"], m["instance"])
 	if gErr, ok := err.(*googleapi.Error); ok && gErr.Code == http.StatusNotFound {
 		return typedErr(resourceDNEError, "failed to stop instance", err)
 	}

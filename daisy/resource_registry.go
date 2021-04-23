@@ -26,11 +26,12 @@ type baseResourceRegistry struct {
 	m  map[string]*Resource
 	mx sync.Mutex
 
-	deleteFn func(res *Resource) DError
-	startFn  func(res *Resource) DError
-	stopFn   func(res *Resource) DError
-	typeName string
-	urlRgx   *regexp.Regexp
+	deleteFn  func(res *Resource) DError
+	startFn   func(res *Resource) DError
+	suspendFn func(res *Resource) DError
+	stopFn    func(res *Resource) DError
+	typeName  string
+	urlRgx    *regexp.Regexp
 }
 
 func (r *baseResourceRegistry) init() {
@@ -41,9 +42,9 @@ func (r *baseResourceRegistry) cleanup() {
 	var wg sync.WaitGroup
 	for name, res := range r.m {
 		if res.creator == nil || // placeholder resource
-			(res.creator != nil && !res.createdInWorkflow) || // resource isn‘t created successfully
-			(res.NoCleanup && !r.w.forceCleanup) || // resource is flagged to avoid cleanup
-			res.deleted { // resource has been deleted
+				(res.creator != nil && !res.createdInWorkflow) || // resource isn‘t created successfully
+				(res.NoCleanup && !r.w.forceCleanup) || // resource is flagged to avoid cleanup
+				res.deleted { // resource has been deleted
 			continue
 		}
 		wg.Add(1)
@@ -96,6 +97,7 @@ func (r *baseResourceRegistry) start(name string) DError {
 		return err
 	}
 	res.stoppedByWf = false
+	res.suspendedByWf = false
 	res.startedByWf = true
 	return nil
 }
@@ -113,7 +115,26 @@ func (r *baseResourceRegistry) stop(name string) DError {
 		return err
 	}
 	res.startedByWf = false
+	res.suspendedByWf = false
 	res.stoppedByWf = true
+	return nil
+}
+
+func (r *baseResourceRegistry) suspend(name string) DError {
+	res, ok := r.get(name)
+	if !ok {
+		return Errf("cannot stop %s %q; does not exist in registry", r.typeName, name)
+	}
+
+	if res.suspendedByWf {
+		return Errf("cannot stop %q; already stopped", name)
+	}
+	if err := r.suspendFn(res); err != nil {
+		return err
+	}
+	res.startedByWf = false
+	res.suspendedByWf = true
+	res.stoppedByWf = false
 	return nil
 }
 

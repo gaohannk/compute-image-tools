@@ -61,6 +61,7 @@ type TestClient struct {
 	CreateTargetInstanceFn      func(project, zone string, ti *compute.TargetInstance) error
 	StartInstanceFn             func(project, zone, name string) error
 	StopInstanceFn              func(project, zone, name string) error
+	SuspendInstanceFn           func(project, zone, name string) error
 	DeleteDiskFn                func(project, zone, name string) error
 	DeleteForwardingRuleFn      func(project, region, name string) error
 	DeleteFirewallRuleFn        func(project, name string) error
@@ -223,6 +224,14 @@ func (c *TestClient) StopInstance(project, zone, name string) error {
 		return c.StopInstanceFn(project, zone, name)
 	}
 	return c.client.StopInstance(project, zone, name)
+}
+
+// SuspendInstance uses the override method SuspendInstanceFn or the real implementation.
+func (c *TestClient) SuspendInstance(project, zone, name string) error {
+	if c.SuspendInstanceFn != nil {
+		return c.SuspendInstanceFn(project, zone, name)
+	}
+	return c.client.SuspendInstance(project, zone, name)
 }
 
 // DeleteDisk uses the override method DeleteDiskFn or the real implementation.

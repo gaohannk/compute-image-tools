@@ -61,6 +61,7 @@ type Step struct {
 	ResizeDisks               *ResizeDisks               `json:",omitempty"`
 	StartInstances            *StartInstances            `json:",omitempty"`
 	StopInstances             *StopInstances             `json:",omitempty"`
+	SuspendInstances          *SuspendInstances          `json:",omitempty"`
 	DeleteResources           *DeleteResources           `json:",omitempty"`
 	DeprecateImages           *DeprecateImages           `json:",omitempty"`
 	IncludeWorkflow           *IncludeWorkflow           `json:",omitempty"`
@@ -152,6 +153,10 @@ func (s *Step) stepImpl() (stepImpl, DError) {
 	if s.StopInstances != nil {
 		matchCount++
 		result = s.StopInstances
+	}
+	if s.SuspendInstances != nil {
+		matchCount++
+		result = s.SuspendInstances
 	}
 	if s.DeleteResources != nil {
 		matchCount++

@@ -39,11 +39,12 @@ type Resource struct {
 	// The name of the disk as known to Daisy and the Daisy user.
 	daisyName string
 
-	link        string
-	deleted     bool
-	stoppedByWf bool
-	startedByWf bool
-	deleteMx    *sync.Mutex
+	link          string
+	deleted       bool
+	stoppedByWf   bool
+	suspendedByWf bool
+	startedByWf   bool
+	deleteMx      *sync.Mutex
 
 	creator, deleter  *Step
 	createdInWorkflow bool
@@ -193,7 +194,7 @@ type oneDResourceCache struct {
 // resourceExists should only be used during validation for existing GCE
 // resources and should not be relied or populated for daisy created resources.
 func (c *twoDResourceCache) resourceExists(listResourceFunc func(project, regionOrZone string, opts ...compute.ListCallOption) (interface{}, error),
-	project, regionOrZone, resourceName string) (bool, DError) {
+		project, regionOrZone, resourceName string) (bool, DError) {
 
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -205,7 +206,7 @@ func (c *twoDResourceCache) resourceExists(listResourceFunc func(project, region
 }
 
 func (c *twoDResourceCache) loadCache(listResourceFunc func(project string, regionOrZone string, opts ...compute.ListCallOption) (interface{}, error),
-	project string, regionOrZone string, resourceName string) DError {
+		project string, regionOrZone string, resourceName string) DError {
 
 	if resourceName == "" {
 		return Errf("must provide resource name")
@@ -229,7 +230,7 @@ func (c *twoDResourceCache) loadCache(listResourceFunc func(project string, regi
 // resourceExists should only be used during validation for existing GCE
 // resources and should not be relied or populated for daisy created resources.
 func (c *oneDResourceCache) resourceExists(listResourceFunc func(project string, opts ...compute.ListCallOption) (interface{}, error),
-	project, resourceName string) (bool, DError) {
+		project, resourceName string) (bool, DError) {
 
 	c.mu.Lock()
 	defer c.mu.Unlock()

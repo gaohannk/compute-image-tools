@@ -137,6 +137,7 @@ func TestTestClient(t *testing.T) {
 	c.CreateSubnetworkFn = func(_, _ string, _ *compute.Subnetwork) error { fakeCalled = true; return nil }
 	c.StartInstanceFn = func(_, _, _ string) error { fakeCalled = true; return nil }
 	c.StopInstanceFn = func(_, _, _ string) error { fakeCalled = true; return nil }
+	c.SuspendInstanceFn = func(_, _, _ string) error { fakeCalled = true; return nil }
 	c.DeleteDiskFn = func(_, _, _ string) error { fakeCalled = true; return nil }
 	c.DeleteFirewallRuleFn = func(_, _ string) error { fakeCalled = true; return nil }
 	c.DeleteImageFn = func(_, _ string) error { fakeCalled = true; return nil }
